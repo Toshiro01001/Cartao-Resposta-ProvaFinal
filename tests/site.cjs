@@ -1,0 +1,85 @@
+/* Teste do site pronto, no computador (1366 px), no iPhone 13, em 320 px e com "reduzir movimento".
+   Como rodar: compile (npx vite build), sirva a pasta dist na porta 8321 e rode: node testes/site.cjs [pasta para as fotos] */
+const { chromium, devices } = require('playwright')
+const URL = process.env.SITE || 'http://localhost:8321/'
+const fotos = process.argv[2]
+const falhas = []
+const ok = (cond, msg) => { if (!cond) falhas.push(msg) }
+
+async function rodar(b, nome, opts) {
+  const c = await b.newContext(opts); const p = await c.newPage()
+  p.on('console', (m) => { if (m.type() === 'error') falhas.push(nome + ' console: ' + m.text()) })
+  p.on('pageerror', (e) => falhas.push(nome + ' erro: ' + e.message))
+  const semRolagem = async (onde) => { const r = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth); ok(r <= 0, `${nome} ${onde}: rolagem lateral de ${r}px`) }
+  const foto = async (n, cheia) => { if (fotos) await p.screenshot({ path: `${fotos}/${nome}-${n}.png`, fullPage: !!cheia }) }
+  const abrir = async (rota) => { await p.goto(URL + '#/' + rota); await p.waitForTimeout(350) }
+
+  await abrir(''); await p.waitForTimeout(700)
+  ok(await p.locator('h1').first().innerText() === 'Prova Final', nome + ' título')
+  ok(await p.locator('.assinatura img[alt="M1L!"]').count() === 1, nome + ' assinatura M1L!')
+  ok(await p.locator('.rtj-vivo').count() === 1, nome + ' assinatura RTJ')
+  const vivo = await p.locator('.sinal-vivo').count()
+  if (opts.reducedMotion === 'reduce') { ok(vivo === 0, nome + ' sinal deveria ficar parado'); ok(await p.locator('.rtj-on').count() === 0, nome + ' RTJ deveria ficar parado') }
+  ok(await p.locator('.sinal svg path').count() === 2, nome + ' desenho parado do sinal')
+  await semRolagem('início'); await foto('inicio', true)
+
+  /* todas as aulas abrem e não estouram a largura */
+  const ids = await p.evaluate(() => [...document.querySelectorAll('.cr-secao')].map((a) => a.getAttribute('href').split('sec=')[1]))
+  ok(ids.length === 6, nome + ' 6 seções de BD')
+  for (const m of ['bd', 'se']) {
+    await abrir('aulas'); await p.locator(`.lado .materia[data-mat="${m}"], .topo .materia[data-mat="${m}"]`).locator('visible=true').first().click(); await p.waitForTimeout(150)
+    const links = await p.evaluate(() => [...document.querySelectorAll('.aula-linha')].map((a) => a.getAttribute('href')))
+    ok(links.length === (m === 'bd' ? 6 : 12), `${nome} aulas de ${m}: ${links.length}`)
+    for (const l of links) { await p.goto(URL + l); await p.waitForTimeout(120); ok(await p.locator('.aula-corpo h2').count() > 2, nome + ' aula vazia ' + l); await semRolagem(l) }
+  }
+  await abrir('aula/bd-u3s2'); await foto('aula', false)
+  await p.locator('.aula-acoes .botao').first().click(); ok(await p.locator('.aula-acoes .botao[aria-pressed="true"]').count() === 1, nome + ' marcar aula lida')
+
+  /* questão: marca, confirma, vê comentário */
+  await abrir('treino?sec=bd-u3s1'); await p.locator('.alt').nth(1).click(); await p.locator('.questao + .fila .botao, .questao .fila .botao').first().click()
+  await p.waitForTimeout(150); ok(await p.locator('.comentario').count() === 1, nome + ' comentário da questão'); ok(await p.locator('.alt-certa').count() === 1, nome + ' alternativa certa marcada')
+  await semRolagem('questão'); await foto('questao', true)
+  await p.locator('.fila-fim .botao').first().click(); await p.waitForTimeout(100); ok(await p.locator('.comentario').count() === 0, nome + ' próxima questão')
+
+  /* cartões */
+  await abrir('cartoes?sec=se-u2s3'); await p.locator('.cartao').click(); await p.waitForTimeout(500); await foto('cartao', false)
+  ok(await p.locator('.botao-acertei').count() === 1, nome + ' botões do cartão'); await p.locator('.botao-acertei').click(); await semRolagem('cartões')
+
+  /* prática de SQL */
+  await abrir('pratica?sec=bd-u3s2'); await p.locator('.editor').first().fill('select count( * )  FROM veiculos'); await p.locator('.pratica .botao').first().click()
+  await p.waitForTimeout(120); ok(await p.locator('.comentario-certo').count() === 1, nome + ' prática igual ao modelo'); await semRolagem('prática'); await foto('pratica', false)
+
+  /* simulado de 10 */
+  await abrir('simulado'); await p.locator('.chip').first().click(); await p.locator('.botao-grande').click(); await p.waitForTimeout(200)
+  for (let i = 0; i < 10; i++) { await p.locator('.alt').first().click(); if (i < 9) await p.locator('.fila-fim .botao').nth(1).click() }
+  await semRolagem('simulado'); await foto('simulado', false)
+  await p.locator('.prova-barra .botao').click(); await p.locator('.prova-barra .botao').first().click(); await p.waitForTimeout(250)
+  ok(await p.locator('.resultado-pontos').count() === 1, nome + ' nota do simulado'); ok(await p.locator('.correcao .questao').count() === 10, nome + ' correção do simulado')
+  await semRolagem('resultado'); await foto('resultado', false)
+
+  /* desempenho, código de progresso e tema */
+  await abrir('desempenho'); await semRolagem('desempenho')
+  await p.locator('.painel .botao').first().click(); await p.waitForTimeout(150)
+  const cod = await p.locator('#codigo').inputValue(); ok(cod.startsWith('PF1.'), nome + ' código de progresso')
+  const antes = await p.evaluate(() => localStorage.getItem('prova-final-v1'))
+  await p.locator('.painel-perigo .botao').click(); await p.locator('.painel-perigo .botao-errei').click(); await p.waitForTimeout(100)
+  ok((await p.evaluate(() => JSON.parse(localStorage.getItem('prova-final-v1')).sims.length)) === 0, nome + ' zerar')
+  await p.locator('#codigo').fill(cod); await p.locator('.painel .botao-claro').first().click(); await p.waitForTimeout(100)
+  ok(JSON.stringify(JSON.parse(await p.evaluate(() => localStorage.getItem('prova-final-v1'))).q) === JSON.stringify(JSON.parse(antes).q), nome + ' carregar código')
+  await p.locator('#codigo').fill('PF1.<img src=x onerror=alert(1)>'); await p.locator('.painel .botao-claro').first().click(); ok((await p.locator('.painel p[aria-live]').innerText()).includes('inválido'), nome + ' código inválido recusado')
+  await foto('desempenho', true)
+  await p.evaluate(() => { const o = JSON.parse(localStorage.getItem('prova-final-v1')); o.tema = 'escuro'; localStorage.setItem('prova-final-v1', JSON.stringify(o)) }); await p.reload(); await p.waitForTimeout(500)
+  ok(await p.evaluate(() => document.documentElement.getAttribute('data-tema')) === 'escuro', nome + ' tema escuro'); await abrir(''); await p.waitForTimeout(500); await foto('escuro', false)
+  await c.close()
+}
+
+;(async () => {
+  const b = await chromium.launch()
+  await rodar(b, 'pc', { viewport: { width: 1366, height: 860 } })
+  await rodar(b, 'iphone', { ...devices['iPhone 13'] })
+  await rodar(b, 'p320', { viewport: { width: 320, height: 640 }, hasTouch: true })
+  await rodar(b, 'calmo', { viewport: { width: 1366, height: 860 }, reducedMotion: 'reduce' })
+  await b.close()
+  console.log(falhas.length ? falhas.join('\n') : 'Tudo certo: 4 cenários, sem erro no console e sem rolagem lateral.')
+  process.exit(falhas.length ? 1 : 0)
+})()
