@@ -46,8 +46,13 @@ async function rodar(b, nome, opts) {
   ok((await p.locator('.questao-conta').first().innerText()).includes('de 10'), nome + ' formulário com 10 questões')
   ok((await p.locator('.questao-topo').first().innerText()).includes('Formulário do professor · 1'), nome + ' formulário começa na questão 1')
   ok(await p.locator('.alt').count() === 4, nome + ' formulário com 4 alternativas')
+  ok(await p.locator('.fila-ordem .chip').getAttribute('aria-pressed') === 'true', nome + ' formulário começa com as alternativas embaralhadas')
+  await p.locator('.fila-ordem .chip').click(); await p.waitForTimeout(150)
+  ok((await p.locator('.alt-texto').nth(1).innerText()).startsWith('O BusyBox será compilado nativamente'), nome + ' ordem do formulário ao desligar o embaralhar')
   await p.locator('.alt').nth(1).click(); await p.locator('.questao .fila .botao').first().click(); await p.waitForTimeout(150)
-  ok(await p.locator('.comentario-certo').count() === 1, nome + ' gabarito do formulário'); await semRolagem('formulário'); await foto('formulario', false)
+  ok(await p.locator('.comentario-certo').count() === 1, nome + ' gabarito do formulário')
+  ok(await p.locator('.comentario-erradas li').count() === 3 && (await p.locator('.comentario-erradas li b').allInnerTexts()).join('') === 'ACD', nome + ' por que as outras estão erradas'); await semRolagem('formulário'); await foto('formulario', true)
+  await p.evaluate(() => localStorage.removeItem('prova-final-ordem-formulario'))
 
   /* cartões */
   await abrir('cartoes?sec=se-u3s3'); await p.locator('.cartao').click({ force: true }); await p.waitForTimeout(900); await foto('cartao', false)
