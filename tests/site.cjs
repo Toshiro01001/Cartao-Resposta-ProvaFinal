@@ -113,13 +113,13 @@ async function rodar(b, nome, opts) {
   await abrir(''); ok(await p.locator('a[href="#/brainrot"]').locator('visible=true').count() >= 1, nome + ' atalho do Estudo Brainrot no início'); await foto('inicio-atalhos', false)
   /* estudo brainrot: 9 reels, separados por matéria, em ordem de unidade; a matéria escolhida vem primeiro */
   await abrir('brainrot'); await p.waitForTimeout(200)
-  ok(await p.locator('.br-materia').count() === 2 && await p.locator('.br-item video').count() === 9, nome + ' brainrot com 2 matérias e 9 vídeos')
+  ok(await p.locator('.br-materia').count() === 2 && await p.locator('.br-item video').count() === 25, nome + ' brainrot com 2 matérias e 25 vídeos')
   const matAtual = await p.evaluate(() => JSON.parse(localStorage.getItem('prova-final-v1')).mat)
   ok(await p.locator('.br-materia').first().getAttribute('data-mat') === matAtual, nome + ' brainrot começa pela matéria escolhida')
-  ok(await p.locator('.br-materia[data-mat="se"] .br-item').count() === 3 && await p.locator('.br-materia[data-mat="bd"] .br-unidade').count() === 2, nome + ' brainrot separado por unidade')
-  ok((await p.locator('.br-materia[data-mat="bd"] .br-nome').allInnerTexts()).map((x) => x.split(' ')[0]).join() === 'U3S1,U3S2,U3S3,U4S1,U4S2,U4S3', nome + ' brainrot em ordem de unidade')
+  ok(await p.locator('.br-materia[data-mat="se"] .br-item').count() === 15 && await p.locator('.br-materia[data-mat="se"] .br-secao').count() === 3 && await p.locator('.br-materia[data-mat="bd"] .br-unidade').count() === 2 && await p.locator('.br-materia[data-mat="bd"] .br-item').count() === 10, nome + ' brainrot separado por unidade e seção')
+  ok((await p.locator('.br-materia[data-mat="bd"] .br-secao h4').allInnerTexts()).map((x) => x.split(' ')[0]).join() === 'U3S1,U3S2,U3S3,U4S1,U4S2,U4S3', nome + ' brainrot em ordem de unidade')
   const arquivos = await p.evaluate(async () => { const r = []; for (const v of document.querySelectorAll('.br-item video')) { const a = await fetch(v.querySelector('source').src, { method: 'HEAD' }), b = await fetch(v.poster, { method: 'HEAD' }); r.push(a.ok && b.ok) } return r })
-  ok(arquivos.length === 9 && arquivos.every(Boolean), nome + ' os 9 vídeos e as 9 capas existem')
+  ok(arquivos.length === 25 && arquivos.every(Boolean), nome + ' os 25 vídeos e as 25 capas existem')
   await p.waitForTimeout(500); await semRolagem('brainrot'); await foto('brainrot', false)
 
   /* dock: no computador os nove ícones; no celular o botão que abre a lista */
