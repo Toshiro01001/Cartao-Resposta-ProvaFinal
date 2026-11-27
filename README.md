@@ -27,6 +27,7 @@ Sistemas Embarcados ficou só com a Unidade 3, que é o conteúdo da prova do 2�
 - **Prática de SQL:** digito o comando e comparo com o modelo.
 - **Simulado:** questões sorteadas, com relógio e nota na escala de 4000.
 - **Decorar:** o que é para saber de cor, por seção, com um botão que esconde as respostas para você se testar. O modo "Repetir até zerar" cobra uma resposta por vez e repete na hora as que você não sabia, até acabar.
+- **Estudo Brainrot:** 9 reels narrados para decorar, um por seção, separados por matéria e em ordem de unidade. Os vídeos ficam em `videos/`.
 - **Desempenho:** pontuação por matéria e um código para levar o progresso de um aparelho para outro.
 
 ![Sinal travado com 4000 pontos e os pinos acesos](docs/sinal-4000.webp)

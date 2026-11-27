@@ -110,14 +110,25 @@ async function rodar(b, nome, opts) {
   ok(JSON.stringify(JSON.parse(await p.evaluate(() => localStorage.getItem('prova-final-v1'))).q) === JSON.stringify(JSON.parse(antes).q), nome + ' carregar código')
   await p.locator('#codigo').fill('PF1.<img src=x onerror=alert(1)>'); await p.locator('.painel .botao-claro').first().click(); ok((await p.locator('.painel p[aria-live]').innerText()).includes('inválido'), nome + ' código inválido recusado')
   await foto('desempenho', true)
-  /* dock: no computador os oito ícones; no celular o botão que abre a lista */
+  /* estudo brainrot: 9 reels, separados por matéria, em ordem de unidade; a matéria escolhida vem primeiro */
+  await abrir('brainrot'); await p.waitForTimeout(200)
+  ok(await p.locator('.br-materia').count() === 2 && await p.locator('.br-item video').count() === 9, nome + ' brainrot com 2 matérias e 9 vídeos')
+  const matAtual = await p.evaluate(() => JSON.parse(localStorage.getItem('prova-final-v1')).mat)
+  ok(await p.locator('.br-materia').first().getAttribute('data-mat') === matAtual, nome + ' brainrot começa pela matéria escolhida')
+  ok(await p.locator('.br-materia[data-mat="se"] .br-item').count() === 3 && await p.locator('.br-materia[data-mat="bd"] .br-unidade').count() === 2, nome + ' brainrot separado por unidade')
+  ok((await p.locator('.br-materia[data-mat="bd"] .br-nome').allInnerTexts()).map((x) => x.split(' ')[0]).join() === 'U3S1,U3S2,U3S3,U4S1,U4S2,U4S3', nome + ' brainrot em ordem de unidade')
+  const arquivos = await p.evaluate(async () => { const r = []; for (const v of document.querySelectorAll('.br-item video')) { const a = await fetch(v.querySelector('source').src, { method: 'HEAD' }), b = await fetch(v.poster, { method: 'HEAD' }); r.push(a.ok && b.ok) } return r })
+  ok(arquivos.length === 9 && arquivos.every(Boolean), nome + ' os 9 vídeos e as 9 capas existem')
+  await p.waitForTimeout(500); await semRolagem('brainrot'); await foto('brainrot', false)
+
+  /* dock: no computador os nove ícones; no celular o botão que abre a lista */
   await abrir(''); await p.waitForTimeout(400)
   if (await p.locator('.fd-dock').isVisible()) {
-    ok(await p.locator('.fd-dock__item').count() === 8, nome + ' dock com 8 itens')
+    ok(await p.locator('.fd-dock__item').count() === 9, nome + ' dock com 9 itens')
     await p.locator('.fd-dock__item[aria-label="Aulas"]').hover(); await p.waitForTimeout(350); ok(await p.locator('.fd-dock__tip').count() === 1, nome + ' balão da dock'); await foto('dock', false)
     await p.locator('.fd-dock__item[aria-label="Aulas"]').click()
   } else {
-    await p.locator('.fd-mobile__toggle').click(); await p.waitForTimeout(450); ok(await p.locator('.fd-mobile__item').count() === 8, nome + ' menu com 8 itens'); await foto('menu', false); await semRolagem('menu aberto')
+    await p.locator('.fd-mobile__toggle').click(); await p.waitForTimeout(450); ok(await p.locator('.fd-mobile__item').count() === 9, nome + ' menu com 9 itens'); await foto('menu', false); await semRolagem('menu aberto')
     await p.locator('.fd-mobile__item[aria-label="Aulas"]').click()
   }
   await p.waitForTimeout(350); ok((await p.locator('h1').first().innerText()) === 'Aulas', nome + ' dock leva às aulas')
