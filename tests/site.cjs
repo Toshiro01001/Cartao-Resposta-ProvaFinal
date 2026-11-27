@@ -54,6 +54,24 @@ async function rodar(b, nome, opts) {
   ok(await p.locator('.comentario-erradas li').count() === 3 && (await p.locator('.comentario-erradas li b').allInnerTexts()).join('') === 'ACD', nome + ' por que as outras estão erradas'); await semRolagem('formulário'); await foto('formulario', true)
   await p.evaluate(() => localStorage.removeItem('prova-final-ordem-formulario'))
 
+  /* formulários 3.2 e 3.3: 10 questões cada, com o aviso de gabarito conferido com o livro */
+  for (const sx of ['se-u3s2', 'se-u3s3']) { await abrir('treino?sec=' + sx + '&f=prof'); await p.waitForTimeout(200); ok((await p.locator('.questao-conta').first().innerText()).includes('de 10'), nome + ' formulário ' + sx + ' com 10 questões'); ok(await p.locator('.alt').count() === 4, nome + ' formulário ' + sx + ' com 4 alternativas') }
+  await p.evaluate(() => localStorage.setItem('prova-final-ordem-formulario', '1')); await abrir('treino?sec=se-u3s2&f=prof'); await p.reload(); await p.waitForTimeout(400)
+  await p.locator('.alt').nth(1).click(); await p.locator('.questao .fila .botao').first().click(); await p.waitForTimeout(150)
+  ok(await p.locator('.comentario-certo').count() === 1 && (await p.locator('.comentario').innerText()).includes('conferido com o livro'), nome + ' formulário 3.2 questão 1 e aviso de gabarito')
+  await p.evaluate(() => localStorage.removeItem('prova-final-ordem-formulario'))
+
+  /* decorar: respostas dos formulários, esconder e ver uma a uma; nas duas matérias */
+  await abrir('decorar'); ok(await p.locator('.dec-sec').count() === 3 && await p.locator('.dec-form .dec-linha').count() === 30, nome + ' decorar com os 3 formulários')
+  await semRolagem('decorar'); await foto('decorar', false)
+  await abrir('decorar?sec=se-u3s2'); ok(await p.locator('.dec-sec').count() === 1 && await p.locator('.dec-form .dec-linha').count() === 10, nome + ' decorar de uma seção')
+  ok(await p.locator('.dec-aviso').count() === 1, nome + ' aviso da questão 4 do formulário 3.2')
+  await p.locator('.tela-decorar .chip').click(); await p.waitForTimeout(100); ok(await p.locator('.dec-r').count() === 0, nome + ' respostas escondidas')
+  await p.locator('.dec-ver').first().click(); ok(await p.locator('.dec-r').count() === 1, nome + ' ver uma resposta'); await semRolagem('decorar escondido'); await foto('decorar-escondido', false)
+  await p.locator(`.topo .materia[data-mat="bd"]`).locator('visible=true').first().click(); await abrir('decorar'); await p.waitForTimeout(150)
+  ok(await p.locator('.dec-sec').count() === 6 && await p.locator('.dec-linha').count() === 108, nome + ' decorar de Banco de Dados'); await semRolagem('decorar bd'); await foto('decorar-bd', false)
+  await p.locator(`.topo .materia[data-mat="se"]`).locator('visible=true').first().click()
+
   /* cartões */
   await abrir('cartoes?sec=se-u3s3'); await p.locator('.cartao').click({ force: true }); await p.waitForTimeout(900); await foto('cartao', false)
   ok(await p.locator('.hc__card .cartao-virado').count() === 1, nome + ' cartão holográfico virado'); ok(await p.locator('.botao-acertei').count() === 1, nome + ' botões do cartão'); await p.locator('.botao-acertei').click(); await semRolagem('cartões')
@@ -81,14 +99,14 @@ async function rodar(b, nome, opts) {
   ok(JSON.stringify(JSON.parse(await p.evaluate(() => localStorage.getItem('prova-final-v1'))).q) === JSON.stringify(JSON.parse(antes).q), nome + ' carregar código')
   await p.locator('#codigo').fill('PF1.<img src=x onerror=alert(1)>'); await p.locator('.painel .botao-claro').first().click(); ok((await p.locator('.painel p[aria-live]').innerText()).includes('inválido'), nome + ' código inválido recusado')
   await foto('desempenho', true)
-  /* dock: no computador os sete ícones; no celular o botão que abre a lista */
+  /* dock: no computador os oito ícones; no celular o botão que abre a lista */
   await abrir(''); await p.waitForTimeout(400)
   if (await p.locator('.fd-dock').isVisible()) {
-    ok(await p.locator('.fd-dock__item').count() === 7, nome + ' dock com 7 itens')
+    ok(await p.locator('.fd-dock__item').count() === 8, nome + ' dock com 8 itens')
     await p.locator('.fd-dock__item[aria-label="Aulas"]').hover(); await p.waitForTimeout(350); ok(await p.locator('.fd-dock__tip').count() === 1, nome + ' balão da dock'); await foto('dock', false)
     await p.locator('.fd-dock__item[aria-label="Aulas"]').click()
   } else {
-    await p.locator('.fd-mobile__toggle').click(); await p.waitForTimeout(450); ok(await p.locator('.fd-mobile__item').count() === 7, nome + ' menu com 7 itens'); await foto('menu', false); await semRolagem('menu aberto')
+    await p.locator('.fd-mobile__toggle').click(); await p.waitForTimeout(450); ok(await p.locator('.fd-mobile__item').count() === 8, nome + ' menu com 8 itens'); await foto('menu', false); await semRolagem('menu aberto')
     await p.locator('.fd-mobile__item[aria-label="Aulas"]').click()
   }
   await p.waitForTimeout(350); ok((await p.locator('h1').first().innerText()) === 'Aulas', nome + ' dock leva às aulas')

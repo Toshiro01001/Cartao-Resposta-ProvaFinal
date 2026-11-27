@@ -15,7 +15,7 @@ Minha folha de dados de estudo para a prova final de duas matérias da faculdade
 | Cartões de memória | 108 | 64 |
 | Prática de SQL | 54 | não tem |
 
-Sistemas Embarcados ficou só com a Unidade 3, que é o conteúdo da prova do 2º bimestre. A seção 3.1 traz também as 10 questões do formulário de revisão do professor, na ordem original e com o gabarito oficial. Modelagem de Dados saiu do site depois que fui aprovado na matéria.
+Sistemas Embarcados ficou só com a Unidade 3, que é o conteúdo da prova do 2º bimestre. As três seções trazem também as 10 questões do formulário de revisão do professor de cada uma: a 3.1 com o gabarito oficial, a 3.2 e a 3.3 com o gabarito conferido com o livro. Modelagem de Dados saiu do site depois que fui aprovado na matéria.
 
 ## Como funciona
 
@@ -26,6 +26,7 @@ Sistemas Embarcados ficou só com a Unidade 3, que é o conteúdo da prova do 2�
 - **Questões:** cinco alternativas com comentário. O que eu erro volta na revisão (1, 3, 7 e 15 dias).
 - **Prática de SQL:** digito o comando e comparo com o modelo.
 - **Simulado:** questões sorteadas, com relógio e nota na escala de 4000.
+- **Decorar:** o que é para saber de cor, por seção, com um botão que esconde as respostas para você se testar.
 - **Desempenho:** pontuação por matéria e um código para levar o progresso de um aparelho para outro.
 
 ![Sinal travado com 4000 pontos e os pinos acesos](docs/sinal-4000.webp)
