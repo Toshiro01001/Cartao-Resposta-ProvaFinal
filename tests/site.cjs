@@ -110,6 +110,7 @@ async function rodar(b, nome, opts) {
   ok(JSON.stringify(JSON.parse(await p.evaluate(() => localStorage.getItem('prova-final-v1'))).q) === JSON.stringify(JSON.parse(antes).q), nome + ' carregar código')
   await p.locator('#codigo').fill('PF1.<img src=x onerror=alert(1)>'); await p.locator('.painel .botao-claro').first().click(); ok((await p.locator('.painel p[aria-live]').innerText()).includes('inválido'), nome + ' código inválido recusado')
   await foto('desempenho', true)
+  await abrir(''); ok(await p.locator('a[href="#/brainrot"]').locator('visible=true').count() >= 1, nome + ' atalho do Estudo Brainrot no início'); await foto('inicio-atalhos', false)
   /* estudo brainrot: 9 reels, separados por matéria, em ordem de unidade; a matéria escolhida vem primeiro */
   await abrir('brainrot'); await p.waitForTimeout(200)
   ok(await p.locator('.br-materia').count() === 2 && await p.locator('.br-item video').count() === 9, nome + ' brainrot com 2 matérias e 9 vídeos')
