@@ -68,7 +68,18 @@ async function rodar(b, nome, opts) {
   ok(await p.locator('.dec-aviso').count() === 1, nome + ' aviso da questão 4 do formulário 3.2')
   await p.locator('.tela-decorar .chip').click(); await p.waitForTimeout(100); ok(await p.locator('.dec-r').count() === 0, nome + ' respostas escondidas')
   await p.locator('.dec-ver').first().click(); ok(await p.locator('.dec-r').count() === 1, nome + ' ver uma resposta'); await semRolagem('decorar escondido'); await foto('decorar-escondido', false)
-  await p.locator(`.topo .materia[data-mat="bd"]`).locator('visible=true').first().click(); await abrir('decorar'); await p.waitForTimeout(150)
+  /* repetir até zerar: a que não sabia volta para o fim; acaba quando todas forem "sabia" */
+  await abrir('decorar?sec=se-u3s2'); ok((await p.locator('.rep-ir-form').innerText()).includes('(10)') && await p.locator('.rep-ir-tudo').count() === 1, nome + ' entradas do repetir')
+  await p.locator('.rep-ir-form').click(); await p.waitForTimeout(300); ok((await p.locator('.rep-conta').innerText()).includes('Faltam 10 de 10'), nome + ' repetir começa com 10')
+  ok(await p.locator('.rep-r').count() === 0, nome + ' repetir começa com a resposta coberta'); const primeira = await p.locator('.rep-g').innerText()
+  await p.locator('.rep-ver').click(); ok(await p.locator('.rep-r').count() === 1, nome + ' repetir mostra a resposta'); await semRolagem('repetir'); await foto('repetir', false)
+  await p.locator('.rep-botoes .botao-errei').click(); ok((await p.locator('.rep-conta').innerText()).includes('Faltam 10 de 10') && (await p.locator('.rep-g').innerText()) !== primeira, nome + ' não sabia volta para o fim')
+  for (let i = 0; i < 9; i++) { await p.locator('.rep-ver').click(); await p.locator('.rep-botoes .botao-acertei').click() }
+  ok((await p.locator('.rep-conta').innerText()).includes('Faltam 1 de 10') && (await p.locator('.rep-g').innerText()) === primeira, nome + ' a que não sabia reaparece no fim')
+  await p.locator('.rep-ver').click(); await p.locator('.rep-botoes .botao-acertei').click(); ok(await p.locator('.rep-fim').count() === 1, nome + ' repetir zera'); await semRolagem('repetir fim'); await foto('repetir-fim', false)
+  await abrir('decorar?sec=bd-u3s1&r=tudo'); await p.waitForTimeout(300); ok((await p.locator('.rep-conta').innerText()).includes('de 15'), nome + ' repetir em Banco de Dados'); await p.locator('.rep-ver').click(); await semRolagem('repetir bd'); await foto('repetir-bd', false)
+  await abrir('decorar?sec=bd-u3s1&r=form'); await p.waitForTimeout(200); ok((await p.locator('.rep-conta').innerText()).includes('de 15'), nome + ' repetir de BD sem formulário cai em tudo')
+  await abrir('decorar'); await p.waitForTimeout(150)
   ok(await p.locator('.dec-sec').count() === 6 && await p.locator('.dec-linha').count() === 108, nome + ' decorar de Banco de Dados'); await semRolagem('decorar bd'); await foto('decorar-bd', false)
   await p.locator(`.topo .materia[data-mat="se"]`).locator('visible=true').first().click()
 
