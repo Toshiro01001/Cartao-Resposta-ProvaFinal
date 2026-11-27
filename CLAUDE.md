@@ -1,6 +1,6 @@
 # Cartão-Resposta: Prova Final
 
-Site de estudo pessoal do Rodrigo Jr para a prova final de Programação em Banco de Dados, Sistemas Embarcados e Modelagem de Dados (esta última só com as 29 questões da revisão do professor, gabarito não oficial) (projeto dele de verdade, não é vitrine). É feito em React e chega aqui já compilado: `index.html` carrega o programa e o estilo de `assets/` (arquivos compilados, não edite à mão). A fonte fica no repositório privado `mil-e-uma-linhas-conteudo`, em `vitrines-fonte/prova-final/`, e `node publicar.mjs caminho/deste/repositorio` compila e copia para cá. As fontes ficam em `fonts/`, as licenças em `licencas/`, o teste em `tests/site.cjs` e as imagens do README em `docs/`. Veja o `README.md`.
+Site de estudo pessoal do Rodrigo Jr para a prova final de Programação em Banco de Dados (Unidades 3 e 4) e Sistemas Embarcados (só a Unidade 3) (projeto dele de verdade, não é vitrine). É feito em React e chega aqui já compilado: `index.html` carrega o programa e o estilo de `assets/` (arquivos compilados, não edite à mão). A fonte fica no repositório privado `mil-e-uma-linhas-conteudo`, em `vitrines-fonte/prova-final/`, e `node publicar.mjs caminho/deste/repositorio` compila e copia para cá. As fontes ficam em `fonts/`, as licenças em `licencas/`, o teste em `tests/site.cjs` e as imagens do README em `docs/`. Veja o `README.md`.
 
 ## Regras de trabalho
 

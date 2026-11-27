@@ -1,6 +1,6 @@
 # Cartão-Resposta: Prova Final
 
-Minha folha de dados de estudo para a prova final de três matérias da faculdade: **Programação em Banco de Dados**, **Sistemas Embarcados** e **Modelagem de Dados**. A ideia de estudar por questões vem do meu [Cartão-Resposta](https://github.com/Toshiro01001/Cartao-Resposta), mas aqui o visual e a estrutura são outros: o site parece a folha de dados de um componente eletrônico.
+Minha folha de dados de estudo para a prova final de duas matérias da faculdade: **Programação em Banco de Dados** (Unidades 3 e 4) e **Sistemas Embarcados** (Unidade 3). A ideia de estudar por questões vem do meu [Cartão-Resposta](https://github.com/Toshiro01001/Cartao-Resposta), mas aqui o visual e a estrutura são outros: o site parece a folha de dados de um componente eletrônico.
 
 **Abrir o site:** https://toshiro01001.github.io/Cartao-Resposta-ProvaFinal/
 
@@ -8,14 +8,14 @@ Minha folha de dados de estudo para a prova final de três matérias da faculdad
 
 ## O que tem
 
-| | Banco de Dados | Sistemas Embarcados | Modelagem de Dados |
-|---|---|---|---|
-| Aulas | 6 | 12 | 4 colas para decorar |
-| Questões comentadas | 120 | 177 | 29 |
-| Cartões de memória | 108 | 215 | 29 |
-| Prática de SQL | 54 | não tem | não tem |
+| | Banco de Dados | Sistemas Embarcados |
+|---|---|---|
+| Aulas | 6 | 3 |
+| Questões comentadas | 120 | 45 |
+| Cartões de memória | 108 | 54 |
+| Prática de SQL | 54 | não tem |
 
-Modelagem de Dados tem só as 29 questões do formulário de revisão do professor, na ordem original, porque 10 delas caem na prova. O gabarito foi resolvido por mim e não é o oficial.
+Sistemas Embarcados ficou só com a Unidade 3, que é o conteúdo da prova do 2º bimestre. Modelagem de Dados saiu do site depois que fui aprovado na matéria.
 
 ## Como funciona
 

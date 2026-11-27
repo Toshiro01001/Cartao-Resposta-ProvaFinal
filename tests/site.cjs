@@ -20,17 +20,17 @@ async function rodar(b, nome, opts) {
   ok(await p.locator('.rtj-vivo').count() === 1, nome + ' assinatura RTJ')
   const vivo = await p.locator('.sinal-vivo').count()
   if (opts.reducedMotion === 'reduce') { ok(vivo === 0, nome + ' sinal deveria ficar parado'); ok(await p.locator('.rtj-on').count() === 0, nome + ' RTJ deveria ficar parado') }
-  ok(await p.locator('.sinal svg path').count() === 3, nome + ' desenho parado do sinal')
+  ok(await p.locator('.sinal svg path').count() === 2, nome + ' desenho parado do sinal')
   await semRolagem('início'); await foto('inicio', true)
 
   /* todas as aulas abrem e não estouram a largura */
   const ids = await p.evaluate(() => [...document.querySelectorAll('.pino')].map((a) => a.getAttribute('href').split('aula/')[1]))
   ok(ids.length === 6, nome + ' 6 pinos de BD')
-  for (const m of ['bd', 'se', 'md']) {
+  for (const m of ['bd', 'se']) {
     await abrir('aulas'); await p.locator(`.topo .materia[data-mat="${m}"]`).locator('visible=true').first().click(); await p.waitForTimeout(150)
     const links = await p.evaluate(() => [...document.querySelectorAll('.aula-linha')].map((a) => a.getAttribute('href')))
-    ok(links.length === (m === 'bd' ? 6 : m === 'md' ? 4 : 12), `${nome} aulas de ${m}: ${links.length}`)
-    for (const l of links) { await p.goto(URL + l); await p.waitForTimeout(120); ok(await p.locator('.aula-corpo h2').count() > (m === 'md' ? 1 : 2), nome + ' aula vazia ' + l); await semRolagem(l) }
+    ok(links.length === (m === 'bd' ? 6 : 3), `${nome} aulas de ${m}: ${links.length}`)
+    for (const l of links) { await p.goto(URL + l); await p.waitForTimeout(120); ok(await p.locator('.aula-corpo h2').count() > 2, nome + ' aula vazia ' + l); await semRolagem(l) }
   }
   await abrir('aula/bd-u3s2'); await foto('aula', false)
   await p.locator('.aula-acoes .botao').first().click(); ok(await p.locator('.aula-acoes .botao[aria-pressed="true"]').count() === 1, nome + ' marcar aula lida')
@@ -41,15 +41,8 @@ async function rodar(b, nome, opts) {
   await semRolagem('questão'); await foto('questao', true)
   await p.locator('.fila-fim .botao').first().click(); await p.waitForTimeout(100); ok(await p.locator('.comentario').count() === 0, nome + ' próxima questão')
 
-  /* Modelagem de Dados: questões da revisão na ordem original, com o número do formulário */
-  await abrir('treino?sec=md-r1&f=novas'); await p.waitForTimeout(150)
-  ok((await p.locator('.questao-topo').first().innerText()).includes('Da revisão'), nome + ' etiqueta da revisão')
-  ok(/^Questão \d+/.test(await p.locator('.questao-topo .etiqueta').first().innerText()), nome + ' número da questão da revisão')
-  ok(await p.locator('.topo .materia-on').getAttribute('data-mat') === 'md', nome + ' troca para Modelagem de Dados pelo link')
-  await abrir('aula/md-r3'); ok(await p.locator('.aula-corpo table tbody tr').count() === 8, nome + ' cola do bloco 17 a 24'); await semRolagem('cola'); await foto('cola', false)
-
   /* cartões */
-  await abrir('cartoes?sec=se-u2s3'); await p.locator('.cartao').click({ force: true }); await p.waitForTimeout(900); await foto('cartao', false)
+  await abrir('cartoes?sec=se-u3s3'); await p.locator('.cartao').click({ force: true }); await p.waitForTimeout(900); await foto('cartao', false)
   ok(await p.locator('.hc__card .cartao-virado').count() === 1, nome + ' cartão holográfico virado'); ok(await p.locator('.botao-acertei').count() === 1, nome + ' botões do cartão'); await p.locator('.botao-acertei').click(); await semRolagem('cartões')
 
   /* prática de SQL */
