@@ -11,11 +11,11 @@ Minha folha de dados de estudo para a prova final de duas matérias da faculdade
 | | Banco de Dados | Sistemas Embarcados |
 |---|---|---|
 | Aulas | 6 | 3 |
-| Questões comentadas | 120 | 45 |
-| Cartões de memória | 108 | 54 |
+| Questões comentadas | 120 | 55 |
+| Cartões de memória | 108 | 64 |
 | Prática de SQL | 54 | não tem |
 
-Sistemas Embarcados ficou só com a Unidade 3, que é o conteúdo da prova do 2º bimestre. Modelagem de Dados saiu do site depois que fui aprovado na matéria.
+Sistemas Embarcados ficou só com a Unidade 3, que é o conteúdo da prova do 2º bimestre. A seção 3.1 traz também as 10 questões do formulário de revisão do professor, na ordem original e com o gabarito oficial. Modelagem de Dados saiu do site depois que fui aprovado na matéria.
 
 ## Como funciona
 

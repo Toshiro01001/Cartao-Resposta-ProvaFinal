@@ -41,6 +41,14 @@ async function rodar(b, nome, opts) {
   await semRolagem('questão'); await foto('questao', true)
   await p.locator('.fila-fim .botao').first().click(); await p.waitForTimeout(100); ok(await p.locator('.comentario').count() === 0, nome + ' próxima questão')
 
+  /* formulário do professor (Sistemas Embarcados 3.1): 10 questões na ordem original, com 4 alternativas */
+  await abrir('treino?sec=se-u3s1&f=prof'); await p.waitForTimeout(200)
+  ok((await p.locator('.questao-conta').first().innerText()).includes('de 10'), nome + ' formulário com 10 questões')
+  ok((await p.locator('.questao-topo').first().innerText()).includes('Formulário do professor · 1'), nome + ' formulário começa na questão 1')
+  ok(await p.locator('.alt').count() === 4, nome + ' formulário com 4 alternativas')
+  await p.locator('.alt').nth(1).click(); await p.locator('.questao .fila .botao').first().click(); await p.waitForTimeout(150)
+  ok(await p.locator('.comentario-certo').count() === 1, nome + ' gabarito do formulário'); await semRolagem('formulário'); await foto('formulario', false)
+
   /* cartões */
   await abrir('cartoes?sec=se-u3s3'); await p.locator('.cartao').click({ force: true }); await p.waitForTimeout(900); await foto('cartao', false)
   ok(await p.locator('.hc__card .cartao-virado').count() === 1, nome + ' cartão holográfico virado'); ok(await p.locator('.botao-acertei').count() === 1, nome + ' botões do cartão'); await p.locator('.botao-acertei').click(); await semRolagem('cartões')
